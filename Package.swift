@@ -2,27 +2,38 @@
 import PackageDescription
 
 let package = Package(
-    name: "NeedleFoundation",
+    name: "Needle",
     products: [
-        .library(name: "NeedleFoundation", targets: ["NeedleFoundation"]),
-        .library(name: "NeedleFoundationTest", targets: ["NeedleFoundationTest"])
+        .executable(name: "needle", targets: ["needle"]),
+        .library(name: "NeedleFramework", targets: ["NeedleFramework"])
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-tools-support-core", .upToNextMajor(from: "0.1.5")),
+        .package(url: "https://github.com/uber/swift-concurrency.git", .upToNextMajor(from: "0.6.5")),
+        .package(url: "https://github.com/uber/swift-common.git", .exact("0.5.0")),
+        .package(url: "https://github.com/apple/swift-syntax.git", .exact("0.50300.0")),
+    ],
     targets: [
         .target(
-            name: "NeedleFoundation",
-            dependencies: []),
+            name: "NeedleFramework",
+            dependencies: [
+                "SwiftToolsSupport-auto",
+                "Concurrency",
+                "SourceParsingFramework",
+                "SwiftSyntax",
+            ]),
         .testTarget(
-            name: "NeedleFoundationTests",
-            dependencies: ["NeedleFoundation"],
-            exclude: []),
+            name: "NeedleFrameworkTests",
+            dependencies: ["NeedleFramework"],
+            exclude: [
+                "Fixtures",
+            ]),
         .target(
-            name: "NeedleFoundationTest",
-            dependencies: ["NeedleFoundation"]),
-        .testTarget(
-            name: "NeedleFoundationTestTests",
-            dependencies: ["NeedleFoundationTest"],
-            exclude: []),
+            name: "needle",
+            dependencies: [
+                "NeedleFramework",
+                "CommandFramework",
+            ]),
     ],
     swiftLanguageVersions: [.v5]
 )
